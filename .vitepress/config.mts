@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "vitepress-template",
-  description: "A starter template for VitePress",
+  title: "阿鲁米ARUMI",
+  description: "欧标铝型材DIY玩家手册",
   srcDir: 'pages',
   outDir: 'dist',
   ignoreDeadLinks: true,
@@ -11,54 +11,55 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     outline: {
-      level: [1, 3],    // 显示 h1 到 h3 级别的标题
+      level: [2, 4],    // 显示 h2 到 h4 级别的标题
+			label: '内容导航', // 大纲的标题
     },
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Quick Start', link: '/quick-start/quick-start' },
-      { text: 'Examples', link: '/examples/markdown-examples' }
+      { text: '首页', link: '/' },
+      { text: '玩家手册', link: '/quick-start/quick-start' },
+      { text: '案例', link: '/examples/markdown-examples' }
     ],
 
     sidebar: [
       {
-        text: 'Quick Start',
+        text: '入门',
         collapsed: true,
         items: [
-          { text: 'Overview', link: '/quick-start/quick-start' },
-          { text: 'Installation', link: '/quick-start/quick-start#installation' },
-          { text: 'Basic Setup', link: '/quick-start/quick-start#basic-setup' },
-          { text: 'Configuration', link: '/quick-start/quick-start#configuration' }
+          { text: '基础知识', link: '/quick-start/quick-start' },
+          { text: '连接方式', link: '/quick-start/quick-start#installation' },
+          { text: 'DIY工具', link: '/quick-start/quick-start#basic-setup' },
+          { text: '配件库', link: '/quick-start/quick-start#configuration' }
         ]
       },
       {
-        text: 'Advanced',
+        text: '认识铝型材',
         collapsed: true,
         items: [
-          { text: 'Custom Theme', link: '/advanced/custom-theme' },
-          { text: 'Markdown Extensions', link: '/advanced/markdown-extensions' },
-          { text: 'Code Highlighting', link: '/advanced/code-highlighting' }
+          { text: '欧标铝型材', link: '/advanced/custom-theme' },
+          { text: '配件库', link: '/advanced/markdown-extensions' },
+          { text: '非标', link: '/advanced/code-highlighting' }
         ]
       },
       {
-        text: 'Deployment',
+        text: '连接方式',
         collapsed: true,
         items: [
-          { text: 'Build for Production', link: '/quick-start/quick-start#build-for-production' },
-          { text: 'GitHub Pages', link: '/quick-start/quick-start#deploy-to-github-pages' },
-          { text: 'Netlify', link: '/quick-start/quick-start#netlify-deployment' }
+          { text: '基础知识', link: '/quick-start/quick-start#build-for-production' },
+          { text: '连接方式', link: '/quick-start/quick-start#deploy-to-github-pages' },
+          { text: '技巧', link: '/quick-start/quick-start#netlify-deployment' }
         ]
       },
       {
-        text: 'Examples',
+        text: '工具',
         items: [
-          { text: 'Markdown Examples', link: '/examples/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/examples/api-examples' }
+          { text: '参考资料', link: '/examples/markdown-examples' },
+          { text: '案例分享', link: '/examples/api-examples' }
         ]
       }
     ],
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/vitepress-template' }
-    ]
+//    socialLinks: [
+//      { icon: 'github', link: 'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/vitepress-template' }
+//    ]
   }
 })
