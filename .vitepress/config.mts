@@ -25,7 +25,7 @@ export default defineConfig({
         text: '入门',
         collapsed: true,
         items: [
-          { text: '基础知识', link: '/quick-start/quick-start' },
+          { text: '基础知识', link: '/quick-start/基础知识' },
           { text: '连接方式', link: '/quick-start/quick-start#installation' },
           { text: 'DIY工具', link: '/quick-start/quick-start#basic-setup' },
           { text: '配件库', link: '/quick-start/quick-start#configuration' }
