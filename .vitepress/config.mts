@@ -48,6 +48,8 @@ export default defineConfig({
           { text: '连接方式', link: '/quick-start/quick-start#deploy-to-github-pages' },
           { text: '技巧', link: '/quick-start/quick-start#netlify-deployment' }
         ]
+
+
       },
       {
         text: '工具',
@@ -61,5 +63,16 @@ export default defineConfig({
 //    socialLinks: [
 //      { icon: 'github', link: 'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/vitepress-template' }
 //    ]
+
+import { createRouter, createMemoryHistory, createWebHashHistory } from 'vue-router'
+
+export default defineConfig({
+  async enhanceApp({ app }) {
+    // 替换为 Hash 路由
+    const router = createRouter({
+      history: createWebHashHistory(),
+      routes: app.router.options.routes
+    })
+    app.use(router)
   }
 })
