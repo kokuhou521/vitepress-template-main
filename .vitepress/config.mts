@@ -63,16 +63,5 @@ export default defineConfig({
 //    socialLinks: [
 //      { icon: 'github', link: 'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/vitepress-template' }
 //    ]
-
-import { createRouter, createMemoryHistory, createWebHashHistory } from 'vue-router'
-
-export default defineConfig({
-  async enhanceApp({ app }) {
-    // 替换为 Hash 路由
-    const router = createRouter({
-      history: createWebHashHistory(),
-      routes: app.router.options.routes
-    })
-    app.use(router)
   }
 })
