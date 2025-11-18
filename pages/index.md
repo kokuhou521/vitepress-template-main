@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 铝型材承重计算器
-      link: /alm-tool.html
+      link: /alm-tool
     - theme: alt
       text: 小红书
       link: /api-examples
