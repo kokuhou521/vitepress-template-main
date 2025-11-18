@@ -8,6 +8,9 @@ export default defineConfig({
   outDir: 'dist',
   ignoreDeadLinks: true,
   cleanUrls: true,
+  routes: [
+    { path: '/alm-tool', component: '/pages/alm-tool.vue' }
+  ]
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     outline: {
