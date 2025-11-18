@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>阿鲁米ARUMI-承重计算器</title>
+  <!-- Tailwind CSS v3 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <!-- 统一的 Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0066cc',
+            secondary: '#00aaff',
+            accent: '#ff6600',
+            dark: '#0a0a0a',
+            'dark-gray': '#1a1a1a',
+            'light-gray': '#2a2a2a'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+      }
+      .border-glow {
+        box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+      }
+      .bg-grid {
+        background-image: 
+          linear-gradient(rgba(0, 102, 204, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 102, 204, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+    }
+  </style>
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #ffffff;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    
+    body.light-theme {
+      background-color: #ffffff;
+      color: #333333;
+    }
+    
+    .input-field {
+      background-color: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #ffffff;
+      transition: all 0.3s ease;
+    }
+    
+    body.light-theme .input-field {
+      background-color: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      color: #333333;
+    }
+    
+    .input-field:focus {
+      border-color: #0066cc;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+      outline: none;
+    }
+    
+    .btn-primary {
+      background-color: #0066cc;
+      color: #ffffff;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background-color: #0055aa;
+      box-shadow: 0 0 10px rgba(0, 102, 204, 0.5);
+    }
+    
+    .card {
+      background-color: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    body.light-theme .card {
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .card:hover {
+      border-color: #0066cc;
+      box-shadow: 0 0 10px rgba(0, 102, 204, 0.3);
+    }
+    
+    .result-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00aaff;
+      text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+    }
+    
+    .warning {
+      color: #ff6600;
+    }
+    
+    .danger {
+      color: #ff3333;
+    }
+    
+    .success {
+      color: #00cc66;
+    }
+    
+    .slider-track {
+      height: 4px;
+      background: #2a2a2a;
+      border-radius: 2px;
+    }
+    
+    .slider-track-highlight {
+      height: 4px;
+      background: #0066cc;
+      border-radius: 2px;
+    }
+    
+    .slider-thumb {
+      width: 16px;
+      height: 16px;
+      background: #0066cc;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+    }
+    
+    /* 自定义滑块样式 */
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: transparent;
+      outline: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      background: #2a2a2a;
+      border-radius: 2px;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 0;
+      background: #0066cc;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+      margin-top: -6px;
+    }
+    
+    input[type="range"]::-moz-range-track {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      background: #2a2a2a;
+      border-radius: 2px;
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border: 0;
+      background: #0066cc;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+    }
+    
+    input[type="range"]::-ms-track {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      background: transparent;
+      border-color: transparent;
+      color: transparent;
+    }
+    
+    input[type="range"]::-ms-fill-lower {
+      background: #0066cc;
+      border-radius: 2px;
+    }
+    
+    input[type="range"]::-ms-fill-upper {
+      background: #2a2a2a;
+      border-radius: 2px;
+    }
+    
+    input[type="range"]::-ms-thumb {
+      width: 16px;
+      height: 16px;
+      border: 0;
+      background: #0066cc;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+    }
+    
+    /* 主题切换时的滑块样式 */
+    body.light-theme input[type="range"]::-webkit-slider-runnable-track {
+      background: #cccccc;
+    }
+    
+    body.light-theme input[type="range"]::-moz-range-track {
+      background: #cccccc;
+    }
+    
+    body.light-theme input[type="range"]::-ms-fill-upper {
+      background: #cccccc;
+    }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #2a2a2a;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      border: 1px solid #0066cc;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #3a3a3a;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0066cc;
+    }
+    
+    body.light-theme ::-webkit-scrollbar-track {
+      background: #f5f5f5;
+    }
+    
+    body.light-theme ::-webkit-scrollbar-thumb {
+      background: #cccccc;
+      border-radius: 4px;
+    }
+    
+    body.light-theme ::-webkit-scrollbar-thumb:hover {
+      background: #0066cc;
+    }
+    
+    /* 动画效果 */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+      }
+      50% {
+        box-shadow: 0 0 15px rgba(0, 170, 255, 0.8);
+      }
+      100% {
+        box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+      }
+    }
+    
+    /* 主题切换相关样式 */
+    body.light-theme header,
+    body.light-theme footer {
+      background-color: #f5f5f5;
+      border-color: #e0e0e0;
+    }
+    
+    body:not(.light-theme) header,
+    body:not(.light-theme) footer {
+      background-color: #1a1a1a;
+      border-color: #3a3a3a;
+    }
+    
+    body.light-theme header .text-light-gray,
+    body.light-theme footer .text-light-gray {
+      color: #666666;
+    }
+    
+    body:not(.light-theme) header .text-light-gray,
+    body:not(.light-theme) footer .text-light-gray {
+      color: #ffffff;
+    }
+    
+    body.light-theme .bg-dark-gray {
+      background-color: #f5f5f5;
+      border-color: #e0e0e0;
+    }
+    
+    body.light-theme .text-gray-400 {
+      color: #666666;
+    }
+    
+    body.light-theme .border-light-gray {
+      border-color: #e0e0e0;
+    }
+    
+    body.light-theme .tooltip .tooltip-text {
+      background-color: #f5f5f5;
+      color: #333333;
+      border-color: #e0e0e0;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    /* 支撑方式选项卡样式 */
+    .support-option {
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 180px;
+    }
+    
+    .support-option:hover {
+      transform: translateY(-2px);
+    }
+    
+    .support-option.selected {
+      border-color: #0066cc;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+    }
+    
+    /* SVG样式 */
+    .support-svg {
+      transition: all 0.3s ease;
+    }
+    
+    .support-option:hover .support-svg {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="min-h-screen light-theme">
+  <!-- 顶部导航栏 -->
+  <header class="bg-dark-gray border-b border-light-gray" id="main-header">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold">阿鲁米ARUMI-承重计算器</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="/" class="text-light-gray hover:text-primary transition-colors">
+          <i class="fa fa-home"></i> 返回首页
+        </a>
+        <button id="theme-toggle" class="text-light-gray hover:text-primary transition-colors">
+          <i class="fa fa-sun-o"></i> 切换主题
+        </button>
+        <button id="help-btn" class="text-light-gray hover:text-primary transition-colors">
+          <i class="fa fa-question-circle"></i> 帮助
+        </button>
+        <button id="settings-btn" class="text-light-gray hover:text-primary transition-colors">
+          <i class="fa fa-cog"></i> 设置
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="container mx-auto px-4 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- 左侧参数输入区 -->
+      <div class="lg:col-span-1">
+        <div class="card p-6">
+          <h2 class="text-xl font-semibold mb-6 text-primary border-b border-light-gray pb-2">参数设置</h2>
+          
+          <!-- 欧标铝型材规格选择 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2 flex items-center">
+              <i class="fa fa-cube text-secondary mr-2"></i>
+              欧标铝型材规格
+            </label>
+            <select id="profile-select" class="input-field w-full p-2 rounded">
+              <option value="2020" selected>欧标2020铝型材 (20×20mm)</option>
+              <option value="2040">欧标2040铝型材 (20×40mm)</option>
+              <option value="3030">欧标3030铝型材 (30×30mm)</option>
+              <option value="3060">欧标3060铝型材 (30×60mm)</option>
+              <option value="4040">欧标4040铝型材 (40×40mm)</option>
+              <option value="4080">欧标4080铝型材 (40×80mm)</option>
+            </select>
+          </div>
+          
+          <!-- 壁厚选择 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2 flex items-center">
+              <i class="fa fa-ruler text-secondary mr-2"></i>
+              壁厚 (mm)
+            </label>
+            <select id="thickness-select" class="input-field w-full p-2 rounded">
+              <!-- 壁厚选项将通过JavaScript动态生成 -->
+            </select>
+          </div>
+          
+          <!-- 跨度设置 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2 flex items-center">
+              <i class="fa fa-arrows-h text-secondary mr-2"></i>
+              跨度 (mm)
+            </label>
+            <div class="flex items-center">
+              <input type="range" id="span-slider" min="100" max="6000" step="100" value="1000" 
+                     class="w-full slider-track appearance-none bg-transparent">
+              <input type="number" id="span-input" min="100" max="6000" step="100" value="1000" 
+                     class="input-field w-20 ml-4 p-2 rounded">
+            </div>
+          </div>
+          
+          <!-- 载荷类型 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2 flex items-center">
+              <i class="fa fa-balance-scale text-secondary mr-2"></i>
+              载荷类型
+            </label>
+            <div class="flex space-x-4">
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="load-type" value="point" class="mr-2 text-primary">
+                <span>集中载荷</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="load-type" value="uniform" checked class="mr-2 text-primary">
+                <span>均布载荷</span>
+              </label>
+            </div>
+          </div>
+          
+          <!-- 载荷值设置 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2 flex items-center">
+              <i class="fa fa-weight text-secondary mr-2"></i>
+              载荷值 (kg)
+            </label>
+            <div class="flex items-center">
+              <input type="range" id="load-slider" min="1" max="500" step="1" value="50" 
+                     class="w-full slider-track appearance-none bg-transparent">
+              <input type="number" id="load-input" min="1" max="500" step="1" value="50" 
+                     class="input-field w-20 ml-4 p-2 rounded">
+            </div>
+          </div>
+          
+          <!-- 支撑方式 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2 flex items-center">
+              <i class="fa fa-building text-secondary mr-2"></i>
+              支撑方式
+            </label>
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2">
+              <!-- 简支梁 -->
+              <div class="support-option bg-dark-gray p-3 rounded-lg border border-light-gray cursor-pointer transition-all hover:border-primary selected" data-value="simple">
+                <div class="flex justify-center mb-2">
+                  <svg width="100" height="60" viewBox="0 0 100 60" class="support-svg">
+                    <!-- 梁 -->
+                    <rect x="10" y="40" width="80" height="6" fill="#0066cc" />
+                    <!-- 支撑点 -->
+                    <circle cx="15" cy="46" r="4" fill="#ff6600" />
+                    <circle cx="85" cy="46" r="4" fill="#ff6600" />
+                    <!-- 载荷点 -->
+                    <circle cx="50" cy="35" r="3" fill="#00aaff" />
+                    <!-- 力箭头 -->
+                    <line x1="50" y1="35" x2="50" y2="40" stroke="#00aaff" stroke-width="2" />
+                    <polygon points="47,40 50,45 53,40" fill="#00aaff" />
+                  </svg>
+                </div>
+                <div class="text-center">
+                  <div class="text-sm font-medium">简支梁</div>
+                  <div class="text-xs text-gray-400">两端支撑</div>
+                </div>
+              </div>
+              
+              <!-- 悬臂梁 -->
+              <div class="support-option bg-dark-gray p-3 rounded-lg border border-light-gray cursor-pointer transition-all hover:border-primary" data-value="cantilever">
+                <div class="flex justify-center mb-2">
+                  <svg width="100" height="60" viewBox="0 0 100 60" class="support-svg">
+                    <!-- 固定端 -->
+                    <rect x="10" y="20" width="10" height="30" fill="#333333" />
+                    <!-- 梁 -->
+                    <rect x="20" y="40" width="70" height="6" fill="#0066cc" />
+                    <!-- 载荷点 -->
+                    <circle cx="85" cy="35" r="3" fill="#00aaff" />
+                    <!-- 力箭头 -->
+                    <line x1="85" y1="35" x2="85" y2="40" stroke="#00aaff" stroke-width="2" />
+                    <polygon points="82,40 85,45 88,40" fill="#00aaff" />
+                  </svg>
+                </div>
+                <div class="text-center">
+                  <div class="text-sm font-medium">悬臂梁</div>
+                  <div class="text-xs text-gray-400">一端固定</div>
+                </div>
+              </div>
+              
+              <!-- 两端固定梁 -->
+              <div class="support-option bg-dark-gray p-3 rounded-lg border border-light-gray cursor-pointer transition-all hover:border-primary" data-value="fixed">
+                <div class="flex justify-center mb-2">
+                  <svg width="100" height="60" viewBox="0 0 100 60" class="support-svg">
+                    <!-- 固定端 -->
+                    <rect x="10" y="20" width="10" height="30" fill="#333333" />
+                    <rect x="80" y="20" width="10" height="30" fill="#333333" />
+                    <!-- 梁 -->
+                    <rect x="20" y="40" width="60" height="6" fill="#0066cc" />
+                    <!-- 载荷点 -->
+                    <circle cx="50" cy="35" r="3" fill="#00aaff" />
+                    <!-- 力箭头 -->
+                    <line x1="50" y1="35" x2="50" y2="40" stroke="#00aaff" stroke-width="2" />
+                    <polygon points="47,40 50,45 53,40" fill="#00aaff" />
+                  </svg>
+                </div>
+                <div class="text-center">
+                  <div class="text-sm font-medium">两端固定梁</div>
+                  <div class="text-xs text-gray-400">两端固定</div>
+                </div>
+              </div>
+            </div>
+            <!-- 隐藏的输入 -->
+            <input type="hidden" id="support-type" value="simple">
+          </div>
+          
+          <!-- 安全系数 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2 flex items-center tooltip">
+              <i class="fa fa-shield text-secondary mr-2"></i>
+              安全系数
+              <span class="tooltip-text">静态载荷：1.5-2.0，动态载荷：2.0-3.0，冲击载荷：3.0-4.0</span>
+            </label>
+            <div class="flex items-center">
+              <input type="range" id="safety-slider" min="1" max="5" step="0.1" value="1.5" 
+                     class="w-full slider-track appearance-none bg-transparent">
+              <input type="number" id="safety-input" min="1" max="5" step="0.1" value="1.5" 
+                     class="input-field w-20 ml-4 p-2 rounded">
+            </div>
+          </div>
+          
+          <!-- 计算按钮 -->
+          <button id="calculate-btn" class="btn-primary w-full py-3 rounded-lg font-medium flex items-center justify-center">
+            <i class="fa fa-calculator mr-2"></i>
+            开始计算
+          </button>
+        </div>
+      </div>
+      
+      <!-- 右侧结果显示区 -->
+      <div class="lg:col-span-2">
+        <div class="card p-6">
+          <h2 class="text-xl font-semibold mb-6 text-primary border-b border-light-gray pb-2">
+            <i class="fa fa-bar-chart mr-2 text-secondary"></i>
+            计算结果
+          </h2>
+          
+          <!-- 型材信息 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <h3 class="text-sm font-medium text-gray-400 mb-2">型材规格</h3>
+              <div class="flex items-center">
+                <i class="fa fa-cube text-primary mr-2"></i>
+                <span id="profile-name">欧标4040铝型材</span>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">规格：<span id="profile-spec">40×40mm</span> | 壁厚：<span id="profile-thickness">1.5</span>mm</div>
+            </div>
+            
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <h3 class="text-sm font-medium text-gray-400 mb-2">截面特性</h3>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div>惯性矩(Ix): <span id="profile-ix">0.00</span> cm⁴</div>
+                <div>截面模量(Zx): <span id="profile-zx">0.00</span> cm³</div>
+                <div>弹性模量(E): <span id="profile-e">69000</span> MPa</div>
+                <div>屈服强度(σy): <span id="profile-sigmay">145</span> MPa</div>
+              </div>
+            </div>
+            
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <h3 class="text-sm font-medium text-gray-400 mb-2">重量与截面积</h3>
+              <div class="flex items-center mb-2">
+                <i class="fa fa-th-large text-primary mr-2"></i>
+                <span id="profile-weight" class="text-lg">0.00</span>
+                <span class="ml-1">kg/m</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fa fa-arrows-alt text-primary mr-2"></i>
+                <span id="profile-area" class="text-lg">0.00</span>
+                <span class="ml-1">cm²</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 计算结果 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 最大挠度 -->
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <h3 class="text-sm font-medium text-gray-400 mb-2">最大挠度</h3>
+              <div class="flex items-end">
+                <span id="deflection-value" class="result-value">0.00</span>
+                <span class="ml-1 mb-1">mm</span>
+              </div>
+              <div class="mt-2 text-xs text-gray-400">
+                允许挠度：<span id="allowable-deflection">10.00</span> mm (L/200)
+              </div>
+              <div class="mt-1 text-xs">
+                <span id="deflection-status" class="success">挠度满足要求</span>
+              </div>
+            </div>
+            
+            <!-- 最大应力 -->
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <h3 class="text-sm font-medium text-gray-400 mb-2">最大应力</h3>
+              <div class="flex items-end">
+                <span id="stress-value" class="result-value">0.00</span>
+                <span class="ml-1 mb-1">MPa</span>
+              </div>
+              <div class="mt-2 text-xs text-gray-400">
+                屈服强度：<span id="yield-strength">145.00</span> MPa
+              </div>
+              <div class="mt-1 text-xs">
+                <span id="stress-status" class="success">应力满足要求</span>
+              </div>
+            </div>
+            
+            <!-- 安全系数 -->
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <h3 class="text-sm font-medium text-gray-400 mb-2">安全系数</h3>
+              <div class="flex items-end">
+                <span id="safety-value" class="result-value">0.00</span>
+              </div>
+              <div class="mt-2 text-xs text-gray-400">
+                目标安全系数：<span id="target-safety">1.50</span>
+              </div>
+              <div class="mt-1 text-xs">
+                <span id="safety-status" class="success">安全系数满足要求</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 图表 -->
+          <div class="mt-8">
+            <h3 class="text-lg font-semibold mb-4 text-primary">挠度与应力分布</h3>
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <canvas id="results-chart" height="250"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 智能推荐 -->
+        <div class="card p-6 mt-6">
+          <h2 class="text-xl font-semibold mb-6 text-primary border-b border-light-gray pb-2">
+            <i class="fa fa-lightbulb-o mr-2 text-accent"></i>
+            智能推荐
+          </h2>
+          
+          <div id="recommendations" class="space-y-4">
+            <div class="bg-dark-gray p-4 rounded-lg border border-light-gray">
+              <h3 class="text-sm font-medium text-accent mb-2">优化建议</h3>
+              <p id="optimization建议" class="text-sm">请点击"开始计算"按钮获取优化建议。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark-gray border-t border-light-gray mt-8" id="main-footer">
+    <div class="container mx-auto px-4 py-4">
+      <div class="text-center text-gray-400 text-sm">
+        <p>© 2025 阿鲁米ARUMI-承重计算器 | 仅供工程参考，实际应用请结合专业知识</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 帮助模态框 -->
+  <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-dark-gray p-6 rounded-lg max-w-2xl w-full mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-primary">使用帮助</h2>
+        <button id="close-help" class="text-gray-400 hover:text-white">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-lg font-medium text-secondary mb-2">基本操作</h3>
+          <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li>在左侧参数设置区选择铝型材规格、跨度、载荷类型、载荷值、支撑方式和安全系数</li>
+            <li>点击"开始计算"按钮进行计算</li>
+            <li>在右侧查看计算结果，包括最大挠度、最大应力和安全系数</li>
+            <li>查看智能推荐的优化建议</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-medium text-secondary mb-2">参数说明</h3>
+          <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li><strong>铝型材规格</strong>：选择欧标铝型材的型号，如2020、2040、4040等</li>
+            <li><strong>跨度</strong>：铝型材的长度，单位为毫米(mm)</li>
+            <li><strong>载荷类型</strong>：选择集中载荷或均布载荷</li>
+            <li><strong>载荷值</strong>：施加在铝型材上的重量，单位为千克(kg)</li>
+            <li><strong>支撑方式</strong>：选择简支梁、悬臂梁或两端固定梁</li>
+            <li><strong>安全系数</strong>：静态载荷一般取1.5-2.0，动态载荷取2.0-3.0，冲击载荷取3.0-4.0</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-medium text-secondary mb-2">计算结果说明</h3>
+          <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li><strong>最大挠度</strong>：铝型材在载荷作用下的最大变形量，单位为毫米(mm)</li>
+            <li><strong>最大应力</strong>：铝型材在载荷作用下的最大应力，单位为兆帕(MPa)</li>
+            <li><strong>安全系数</strong>：材料屈服强度与最大应力的比值，反映结构的安全程度</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-6 text-center">
+        <button id="close-help-btn" class="btn-primary px-6 py-2 rounded">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置模态框 -->
+  <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-dark-gray p-6 rounded-lg max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-primary">应用设置</h2>
+        <button id="close-settings" class="text-gray-400 hover:text-white">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-2">允许挠度比例</label>
+          <div class="flex items-center">
+            <select id="deflection-ratio" class="input-field w-full p-2 rounded">
+              <option value="200">L/200 (标准)</option>
+              <option value="300">L/300 (严格)</option>
+              <option value="400">L/400 (更严格)</option>
+              <option value="1000">L/1000 (高精度)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">显示选项</label>
+          <div class="space-y-2">
+            <label class="flex items-center">
+              <input type="checkbox" id="show-deflection" checked class="mr-2">
+              <span>显示挠度曲线</span>
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" id="show-stress" checked class="mr-2">
+              <span>显示应力曲线</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 text-center">
+        <button id="save-settings" class="btn-primary px-6 py-2 rounded">保存设置</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 铝型材数据
+    const aluminumProfiles = [
+      {
+        id: "2020",
+        name: "欧标2020铝型材",
+        spec: "20×20mm",
+        wallThicknessOptions: [
+          {
+            thickness: 0.8, // mm
+            dimensions: { width: 20, height: 20 },
+            sectionProperties: {
+              Ix: 0.35, // cm⁴
+              Iy: 0.35, // cm⁴
+              Zx: 0.35, // cm³
+              Zy: 0.35  // cm³
+            },
+            weightPerMeter: 0.28, // kg/m
+            maxLoadCapacity: 40  // kg/m（参考值）
+          },
+          {
+            thickness: 0.9, // mm
+            dimensions: { width: 20, height: 20 },
+            sectionProperties: {
+              Ix: 0.39, // cm⁴
+              Iy: 0.39, // cm⁴
+              Zx: 0.39, // cm³
+              Zy: 0.39  // cm³
+            },
+            weightPerMeter: 0.32, // kg/m
+            maxLoadCapacity: 45  // kg/m（参考值）
+          },
+          {
+            thickness: 1.0, // mm
+            dimensions: { width: 20, height: 20 },
+            sectionProperties: {
+              Ix: 0.42, // cm⁴
+              Iy: 0.42, // cm⁴
+              Zx: 0.42, // cm³
+              Zy: 0.42  // cm³
+            },
+            weightPerMeter: 0.35, // kg/m
+            maxLoadCapacity: 50  // kg/m（参考值）
+          },
+          {
+            thickness: 1.2, // mm
+            dimensions: { width: 20, height: 20 },
+            sectionProperties: {
+              Ix: 0.52, // cm⁴
+              Iy: 0.52, // cm⁴
+              Zx: 0.52, // cm³
+              Zy: 0.52  // cm³
+            },
+            weightPerMeter: 0.42, // kg/m
+            maxLoadCapacity: 70  // kg/m（参考值）
+          },
+          {
+            thickness: 1.4, // mm
+            dimensions: { width: 20, height: 20 },
+            sectionProperties: {
+              Ix: 0.63, // cm⁴
+              Iy: 0.63, // cm⁴
+              Zx: 0.63, // cm³
+              Zy: 0.63  // cm³
+            },
+            weightPerMeter: 0.49, // kg/m
+            maxLoadCapacity: 85  // kg/m（参考值）
+          },
+          {
+            thickness: 1.5, // mm
+            dimensions: { width: 20, height: 20 },
+            sectionProperties: {
+              Ix: 0.68, // cm⁴
+              Iy: 0.68, // cm⁴
+              Zx: 0.68, // cm³
+              Zy: 0.68  // cm³
+            },
+            weightPerMeter: 0.53, // kg/m
+            maxLoadCapacity: 90  // kg/m（参考值）
+          }
+        ],
+        material: {
+          alloy: "6063-T5",
+          elasticModulus: 69000, // MPa
+          yieldStrength: 145,   // MPa
+          tensileStrength: 185, // MPa
+          density: 2.7          // g/cm³
+        }
+      },
+      {
+        id: "2040",
+        name: "欧标2040铝型材",
+        spec: "20×40mm",
+        wallThicknessOptions: [
+          {
+            thickness: 1.0, // mm
+            dimensions: { width: 20, height: 40 },
+            sectionProperties: {
+              Ix: 2.67, // cm⁴
+              Iy: 0.89, // cm⁴
+              Zx: 1.33, // cm³
+              Zy: 0.89  // cm³
+            },
+            weightPerMeter: 0.78, // kg/m
+            maxLoadCapacity: 150  // kg/m（参考值）
+          },
+          {
+            thickness: 1.2, // mm
+            dimensions: { width: 20, height: 40 },
+            sectionProperties: {
+              Ix: 3.58, // cm⁴
+              Iy: 0.98, // cm⁴
+              Zx: 1.93, // cm³
+              Zy: 0.98  // cm³
+            },
+            weightPerMeter: 0.88, // kg/m
+            maxLoadCapacity: 280  // kg/m（参考值）
+          },
+          {
+            thickness: 1.5, // mm
+            dimensions: { width: 20, height: 40 },
+            sectionProperties: {
+              Ix: 4.51, // cm⁴
+              Iy: 1.24, // cm⁴
+              Zx: 2.44, // cm³
+              Zy: 1.24  // cm³
+            },
+            weightPerMeter: 1.1, // kg/m
+            maxLoadCapacity: 350  // kg/m（参考值）
+          }
+        ],
+        material: {
+          alloy: "6063-T5",
+          elasticModulus: 69000, // MPa
+          yieldStrength: 145,   // MPa
+          tensileStrength: 185, // MPa
+          density: 2.7          // g/cm³
+        }
+      },
+      {
+        id: "3030",
+        name: "欧标3030铝型材",
+        spec: "30×30mm",
+        wallThicknessOptions: [
+          {
+            thickness: 1.0, // mm
+            dimensions: { width: 30, height: 30 },
+            sectionProperties: {
+              Ix: 1.45, // cm⁴
+              Iy: 1.45, // cm⁴
+              Zx: 0.90, // cm³
+              Zy: 0.90  // cm³
+            },
+            weightPerMeter: 0.53, // kg/m
+            maxLoadCapacity: 200  // kg/m（参考值）
+          },
+          {
+            thickness: 1.4, // mm
+            dimensions: { width: 30, height: 30 },
+            sectionProperties: {
+              Ix: 2.00, // cm⁴
+              Iy: 2.00, // cm⁴
+              Zx: 1.25, // cm³
+              Zy: 1.25  // cm³
+            },
+            weightPerMeter: 0.74, // kg/m
+            maxLoadCapacity: 280  // kg/m（参考值）
+          },
+          {
+            thickness: 1.5, // mm
+            dimensions: { width: 30, height: 30 },
+            sectionProperties: {
+              Ix: 2.15, // cm⁴
+              Iy: 2.15, // cm⁴
+              Zx: 1.35, // cm³
+              Zy: 1.35  // cm³
+            },
+            weightPerMeter: 0.79, // kg/m
+            maxLoadCapacity: 300  // kg/m（参考值）
+          },
+          {
+            thickness: 1.8, // mm
+            dimensions: { width: 30, height: 30 },
+            sectionProperties: {
+              Ix: 2.55, // cm⁴
+              Iy: 2.55, // cm⁴
+              Zx: 1.60, // cm³
+              Zy: 1.60  // cm³
+            },
+            weightPerMeter: 0.95, // kg/m
+            maxLoadCapacity: 360  // kg/m（参考值）
+          },
+          {
+            thickness: 2.0, // mm
+            dimensions: { width: 30, height: 30 },
+            sectionProperties: {
+              Ix: 2.85, // cm⁴
+              Iy: 2.85, // cm⁴
+              Zx: 1.80, // cm³
+              Zy: 1.80  // cm³
+            },
+            weightPerMeter: 1.05, // kg/m
+            maxLoadCapacity: 400  // kg/m（参考值）
+          },
+          {
+            thickness: 2.2, // mm
+            dimensions: { width: 30, height: 30 },
+            sectionProperties: {
+              Ix: 3.15, // cm⁴
+              Iy: 3.15, // cm⁴
+              Zx: 2.00, // cm³
+              Zy: 2.00  // cm³
+            },
+            weightPerMeter: 1.16, // kg/m
+            maxLoadCapacity: 440  // kg/m（参考值）
+          }
+        ],
+        material: {
+          alloy: "6063-T5",
+          elasticModulus: 69000, // MPa
+          yieldStrength: 145,   // MPa
+          tensileStrength: 185, // MPa
+          density: 2.7          // g/cm³
+        }
+      },
+      {
+        id: "3060",
+        name: "欧标3060铝型材",
+        spec: "30×60mm",
+        wallThicknessOptions: [
+          {
+            thickness: 1.5, // mm
+            dimensions: { width: 30, height: 60 },
+            sectionProperties: {
+              Ix: 10.8, // cm⁴
+              Iy: 2.52, // cm⁴
+              Zx: 3.60, // cm³
+              Zy: 1.68  // cm³
+            },
+            weightPerMeter: 1.35, // kg/m
+            maxLoadCapacity: 450  // kg/m（参考值）
+          },
+          {
+            thickness: 1.6, // mm
+            dimensions: { width: 30, height: 60 },
+            sectionProperties: {
+              Ix: 11.5, // cm⁴
+              Iy: 2.68, // cm⁴
+              Zx: 3.84, // cm³
+              Zy: 1.79  // cm³
+            },
+            weightPerMeter: 1.44, // kg/m
+            maxLoadCapacity: 480  // kg/m（参考值）
+          },
+          {
+            thickness: 1.8, // mm
+            dimensions: { width: 30, height: 60 },
+            sectionProperties: {
+              Ix: 12.9, // cm⁴
+              Iy: 3.02, // cm⁴
+              Zx: 4.32, // cm³
+              Zy: 2.01  // cm³
+            },
+            weightPerMeter: 1.62, // kg/m
+            maxLoadCapacity: 540  // kg/m（参考值）
+          },
+          {
+            thickness: 2.0, // mm
+            dimensions: { width: 30, height: 60 },
+            sectionProperties: {
+              Ix: 14.4, // cm⁴
+              Iy: 3.36, // cm⁴
+              Zx: 4.80, // cm³
+              Zy: 2.24  // cm³
+            },
+            weightPerMeter: 1.80, // kg/m
+            maxLoadCapacity: 600  // kg/m（参考值）
+          },
+          {
+            thickness: 2.2, // mm
+            dimensions: { width: 30, height: 60 },
+            sectionProperties: {
+              Ix: 15.8, // cm⁴
+              Iy: 3.70, // cm⁴
+              Zx: 5.28, // cm³
+              Zy: 2.47  // cm³
+            },
+            weightPerMeter: 1.98, // kg/m
+            maxLoadCapacity: 660  // kg/m（参考值）
+          }
+        ],
+        material: {
+          alloy: "6063-T5",
+          elasticModulus: 69000, // MPa
+          yieldStrength: 145,   // MPa
+          tensileStrength: 185, // MPa
+          density: 2.7          // g/cm³
+        }
+      },
+      {
+        id: "4040",
+        name: "欧标4040铝型材",
+        spec: "40×40mm",
+        wallThicknessOptions: [
+          {
+            thickness: 1.3, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 4.20, // cm⁴
+              Iy: 4.20, // cm⁴
+              Zx: 2.10, // cm³
+              Zy: 2.10  // cm³
+            },
+            weightPerMeter: 1.19, // kg/m
+            maxLoadCapacity: 320  // kg/m（参考值）
+          },
+          {
+            thickness: 1.4, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 4.55, // cm⁴
+              Iy: 4.55, // cm⁴
+              Zx: 2.27, // cm³
+              Zy: 2.27  // cm³
+            },
+            weightPerMeter: 1.29, // kg/m
+            maxLoadCapacity: 350  // kg/m（参考值）
+          },
+          {
+            thickness: 1.5, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 4.90, // cm⁴
+              Iy: 4.90, // cm⁴
+              Zx: 2.45, // cm³
+              Zy: 2.45  // cm³
+            },
+            weightPerMeter: 1.38, // kg/m
+            maxLoadCapacity: 380  // kg/m（参考值）
+          },
+          {
+            thickness: 1.6, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 5.25, // cm⁴
+              Iy: 5.25, // cm⁴
+              Zx: 2.62, // cm³
+              Zy: 2.62  // cm³
+            },
+            weightPerMeter: 1.48, // kg/m
+            maxLoadCapacity: 410  // kg/m（参考值）
+          },
+          {
+            thickness: 1.8, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 5.95, // cm⁴
+              Iy: 5.95, // cm⁴
+              Zx: 2.97, // cm³
+              Zy: 2.97  // cm³
+            },
+            weightPerMeter: 1.67, // kg/m
+            maxLoadCapacity: 460  // kg/m（参考值）
+          },
+          {
+            thickness: 2.0, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 6.53, // cm⁴
+              Iy: 6.53, // cm⁴
+              Zx: 3.27, // cm³
+              Zy: 3.27  // cm³
+            },
+            weightPerMeter: 1.84, // kg/m
+            maxLoadCapacity: 500  // kg/m（参考值）
+          },
+          {
+            thickness: 2.2, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 7.22, // cm⁴
+              Iy: 7.22, // cm⁴
+              Zx: 3.61, // cm³
+              Zy: 3.61  // cm³
+            },
+            weightPerMeter: 2.02, // kg/m
+            maxLoadCapacity: 550  // kg/m（参考值）
+          },
+          {
+            thickness: 2.4, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 7.91, // cm⁴
+              Iy: 7.91, // cm⁴
+              Zx: 3.95, // cm³
+              Zy: 3.95  // cm³
+            },
+            weightPerMeter: 2.20, // kg/m
+            maxLoadCapacity: 600  // kg/m（参考值）
+          },
+          {
+            thickness: 2.5, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 8.16, // cm⁴
+              Iy: 8.16, // cm⁴
+              Zx: 4.08, // cm³
+              Zy: 4.08  // cm³
+            },
+            weightPerMeter: 2.30, // kg/m
+            maxLoadCapacity: 630  // kg/m（参考值）
+          },
+          {
+            thickness: 2.6, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 8.40, // cm⁴
+              Iy: 8.40, // cm⁴
+              Zx: 4.20, // cm³
+              Zy: 4.20  // cm³
+            },
+            weightPerMeter: 2.39, // kg/m
+            maxLoadCapacity: 650  // kg/m（参考值）
+          },
+          {
+            thickness: 2.8, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 8.89, // cm⁴
+              Iy: 8.89, // cm⁴
+              Zx: 4.44, // cm³
+              Zy: 4.44  // cm³
+            },
+            weightPerMeter: 2.58, // kg/m
+            maxLoadCapacity: 700  // kg/m（参考值）
+          },
+          {
+            thickness: 3.2, // mm
+            dimensions: { width: 40, height: 40 },
+            sectionProperties: {
+              Ix: 9.79, // cm⁴
+              Iy: 9.79, // cm⁴
+              Zx: 4.89, // cm³
+              Zy: 4.89  // cm³
+            },
+            weightPerMeter: 2.76, // kg/m
+            maxLoadCapacity: 750  // kg/m（参考值）
+          }
+        ],
+        material: {
+          alloy: "6063-T5",
+          elasticModulus: 69000, // MPa
+          yieldStrength: 145,   // MPa
+          tensileStrength: 185, // MPa
+          density: 2.7          // g/cm³
+        }
+      },
+      {
+        id: "4080",
+        name: "欧标4080铝型材",
+        spec: "40×80mm",
+        wallThicknessOptions: [
+          {
+            thickness: 1.6, // mm
+            dimensions: { width: 40, height: 80 },
+            sectionProperties: {
+              Ix: 27.3, // cm⁴
+              Iy: 6.82, // cm⁴
+              Zx: 6.82, // cm³
+              Zy: 3.41  // cm³
+            },
+            weightPerMeter: 2.30, // kg/m
+            maxLoadCapacity: 680  // kg/m（参考值）
+          },
+          {
+            thickness: 1.8, // mm
+            dimensions: { width: 40, height: 80 },
+            sectionProperties: {
+              Ix: 30.7, // cm⁴
+              Iy: 7.68, // cm⁴
+              Zx: 7.68, // cm³
+              Zy: 3.84  // cm³
+            },
+            weightPerMeter: 2.59, // kg/m
+            maxLoadCapacity: 770  // kg/m（参考值）
+          },
+          {
+            thickness: 2.0, // mm
+            dimensions: { width: 40, height: 80 },
+            sectionProperties: {
+              Ix: 34.1, // cm⁴
+              Iy: 8.53, // cm⁴
+              Zx: 8.53, // cm³
+              Zy: 4.26  // cm³
+            },
+            weightPerMeter: 2.88, // kg/m
+            maxLoadCapacity: 850  // kg/m（参考值）
+          },
+          {
+            thickness: 2.2, // mm
+            dimensions: { width: 40, height: 80 },
+            sectionProperties: {
+              Ix: 37.5, // cm⁴
+              Iy: 9.38, // cm⁴
+              Zx: 9.38, // cm³
+              Zy: 4.69  // cm³
+            },
+            weightPerMeter: 3.17, // kg/m
+            maxLoadCapacity: 940  // kg/m（参考值）
+          },
+          {
+            thickness: 2.5, // mm
+            dimensions: { width: 40, height: 80 },
+            sectionProperties: {
+              Ix: 42.6, // cm⁴
+              Iy: 10.7, // cm⁴
+              Zx: 10.7, // cm³
+              Zy: 5.33  // cm³
+            },
+            weightPerMeter: 3.60, // kg/m
+            maxLoadCapacity: 1060 // kg/m（参考值）
+          },
+          {
+            thickness: 2.8, // mm
+            dimensions: { width: 40, height: 80 },
+            sectionProperties: {
+              Ix: 47.7, // cm⁴
+              Iy: 11.9, // cm⁴
+              Zx: 11.9, // cm³
+              Zy: 5.97  // cm³
+            },
+            weightPerMeter: 4.03, // kg/m
+            maxLoadCapacity: 1190 // kg/m（参考值）
+          },
+          {
+            thickness: 3.2, // mm
+            dimensions: { width: 40, height: 80 },
+            sectionProperties: {
+              Ix: 54.6, // cm⁴
+              Iy: 13.6, // cm⁴
+              Zx: 13.6, // cm³
+              Zy: 6.82  // cm³
+            },
+            weightPerMeter: 4.61, // kg/m
+            maxLoadCapacity: 1360 // kg/m（参考值）
+          }
+        ],
+        material: {
+          alloy: "6063-T5",
+          elasticModulus: 69000, // MPa
+          yieldStrength: 145,   // MPa
+          tensileStrength: 185, // MPa
+          density: 2.7          // g/cm³
+        }
+      }
+    ];
+
+    // DOM元素
+    const profileSelect = document.getElementById('profile-select');
+    const thicknessSelect = document.getElementById('thickness-select');
+    const spanSlider = document.getElementById('span-slider');
+    const spanInput = document.getElementById('span-input');
+    const loadSlider = document.getElementById('load-slider');
+    const loadInput = document.getElementById('load-input');
+    const safetySlider = document.getElementById('safety-slider');
+    const safetyInput = document.getElementById('safety-input');
+    const supportType = document.getElementById('support-type');
+    const calculateBtn = document.getElementById('calculate-btn');
+    const themeToggle = document.getElementById('theme-toggle');
+    const helpBtn = document.getElementById('help-btn');
+    const settingsBtn = document.getElementById('settings-btn');
+    const helpModal = document.getElementById('help-modal');
+    const settingsModal = document.getElementById('settings-modal');
+    const closeHelp = document.getElementById('close-help');
+    const closeHelpBtn = document.getElementById('close-help-btn');
+    const closeSettings = document.getElementById('close-settings');
+    const saveSettings = document.getElementById('save-settings');
+    const profileName = document.getElementById('profile-name');
+    const profileSpec = document.getElementById('profile-spec');
+    const profileIx = document.getElementById('profile-ix');
+    const profileZx = document.getElementById('profile-zx');
+    const profileE = document.getElementById('profile-e');
+    const profileSigmay = document.getElementById('profile-sigmay');
+    const profileWeight = document.getElementById('profile-weight');
+    const profileThickness = document.getElementById('profile-thickness');
+    const profileArea = document.getElementById('profile-area');
+    const deflectionValue = document.getElementById('deflection-value');
+    const allowableDeflection = document.getElementById('allowable-deflection');
+    const deflectionStatus = document.getElementById('deflection-status');
+    const stressValue = document.getElementById('stress-value');
+    const yieldStrength = document.getElementById('yield-strength');
+    const stressStatus = document.getElementById('stress-status');
+    const safetyValue = document.getElementById('safety-value');
+    const targetSafety = document.getElementById('target-safety');
+    const safetyStatus = document.getElementById('safety-status');
+    const optimizationAdvice = document.getElementById('optimization建议');
+
+    // 图表
+    let resultsChart;
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      // 初始化型材信息
+      generateThicknessOptions('2020');
+      updateProfileInfo('2020', thicknessSelect.value);
+      
+      // 初始化支撑方式选择
+      initSupportOptions();
+      
+      // 绑定事件
+      profileSelect.addEventListener('change', () => {
+        generateThicknessOptions(profileSelect.value);
+        updateProfileInfo(profileSelect.value, thicknessSelect.value);
+      });
+      
+      thicknessSelect.addEventListener('change', () => {
+        updateProfileInfo(profileSelect.value, thicknessSelect.value);
+      });
+      
+      // 滑块和输入框联动
+      spanSlider.addEventListener('input', () => {
+        spanInput.value = spanSlider.value;
+      });
+      
+      spanInput.addEventListener('change', () => {
+        if (spanInput.value < 100) spanInput.value = 100;
+        if (spanInput.value > 10000) spanInput.value = 10000;
+        spanSlider.value = spanInput.value;
+      });
+      
+      loadSlider.addEventListener('input', () => {
+        loadInput.value = loadSlider.value;
+      });
+      
+      loadInput.addEventListener('change', () => {
+        if (loadInput.value < 1) loadInput.value = 1;
+        if (loadInput.value > 1000) loadInput.value = 1000;
+        loadSlider.value = loadInput.value;
+      });
+      
+      safetySlider.addEventListener('input', () => {
+        safetyInput.value = safetySlider.value;
+      });
+      
+      safetyInput.addEventListener('change', () => {
+        if (safetyInput.value < 1) safetyInput.value = 1;
+        if (safetyInput.value > 5) safetyInput.value = 5;
+        safetySlider.value = safetyInput.value;
+      });
+      
+      // 计算按钮点击事件
+      calculateBtn.addEventListener('click', calculate);
+      
+      // 主题切换
+      themeToggle.addEventListener('click', toggleTheme);
+      
+      // 帮助和设置模态框
+      helpBtn.addEventListener('click', () => {
+        helpModal.classList.remove('hidden');
+      });
+      
+      closeHelp.addEventListener('click', () => {
+        helpModal.classList.add('hidden');
+      });
+      
+      closeHelpBtn.addEventListener('click', () => {
+        helpModal.classList.add('hidden');
+      });
+      
+      settingsBtn.addEventListener('click', () => {
+        settingsModal.classList.remove('hidden');
+      });
+      
+      closeSettings.addEventListener('click', () => {
+        settingsModal.classList.add('hidden');
+      });
+      
+      saveSettings.addEventListener('click', () => {
+        settingsModal.classList.add('hidden');
+      });
+      
+      // 点击模态框外部关闭
+      window.addEventListener('click', (e) => {
+        if (e.target === helpModal) {
+          helpModal.classList.add('hidden');
+        }
+        if (e.target === settingsModal) {
+          settingsModal.classList.add('hidden');
+        }
+      });
+      
+      // 初始化图表
+      resultsChart = createChart();
+    });
+
+    // 生成壁厚选项
+    function generateThicknessOptions(profileId) {
+      const profile = aluminumProfiles.find(p => p.id === profileId);
+      if (!profile) return;
+      
+      // 清空现有选项
+      thicknessSelect.innerHTML = '';
+      
+      // 添加标准壁厚选项
+      profile.wallThicknessOptions.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.thickness;
+        optionElement.textContent = `${option.thickness}mm`;
+        thicknessSelect.appendChild(optionElement);
+      });
+    }
+
+    // 更新型材信息
+    function updateProfileInfo(profileId, thickness) {
+      const profile = aluminumProfiles.find(p => p.id === profileId);
+      if (!profile) return;
+      
+      const wallThicknessOption = profile.wallThicknessOptions.find(t => t.thickness === parseFloat(thickness));
+      if (!wallThicknessOption) return;
+      
+      // 更新型材基本信息
+      profileName.textContent = profile.name;
+      profileSpec.textContent = profile.spec;
+      profileThickness.textContent = wallThicknessOption.thickness.toFixed(1);
+      
+      // 更新截面特性
+      profileIx.textContent = wallThicknessOption.sectionProperties.Ix.toFixed(2);
+      profileZx.textContent = wallThicknessOption.sectionProperties.Zx.toFixed(2);
+      profileE.textContent = profile.material.elasticModulus;
+      profileSigmay.textContent = profile.material.yieldStrength;
+      
+      // 更新重量
+      profileWeight.textContent = wallThicknessOption.weightPerMeter.toFixed(2);
+      
+      // 计算并更新截面面积 (cm²)
+      // 铝的密度为2.7 g/cm³ = 2700 kg/m³
+      // 重量(kg/m) = 面积(m²) × 密度(kg/m³)
+      // 面积(m²) = 重量(kg/m) / 密度(kg/m³)
+      // 转换为cm²: 1 m² = 10000 cm²
+      const area = (wallThicknessOption.weightPerMeter / 2700) * 10000;
+      profileArea.textContent = area.toFixed(2);
+    }
+
+    // 创建图表
+    function createChart() {
+      const ctx = document.getElementById('results-chart').getContext('2d');
+      
+      // 设置图表主题
+      const isLightTheme = document.body.classList.contains('light-theme');
+      const textColor = isLightTheme ? '#333333' : '#ffffff';
+      const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+      
+      return new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: '挠度 (mm)',
+              data: [],
+              borderColor: '#00aaff',
+              backgroundColor: 'rgba(0, 170, 255, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              yAxisID: 'y'
+            },
+            {
+              label: '应力 (MPa)',
+              data: [],
+              borderColor: '#ff6600',
+              backgroundColor: 'rgba(255, 102, 0, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: textColor
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: '位置 (mm)',
+                color: textColor
+              },
+              ticks: {
+                color: textColor
+              },
+              grid: {
+                color: gridColor
+              }
+            },
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: '挠度 (mm)',
+                color: '#00aaff'
+              },
+              ticks: {
+                color: textColor
+              },
+              grid: {
+                color: gridColor
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: {
+                display: true,
+                text: '应力 (MPa)',
+                color: '#ff6600'
+              },
+              ticks: {
+                color: textColor
+              },
+              grid: {
+                drawOnChartArea: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 更新图表
+    function updateChart(span, deflectionResults, stressResults) {
+      // 生成数据点
+      const points = 100;
+      const labels = [];
+      const deflectionData = [];
+      const stressData = [];
+      
+      // 获取设置
+      const showDeflection = document.getElementById('show-deflection').checked;
+      const showStress = document.getElementById('show-stress').checked;
+      
+      // 生成数据
+      for (let i = 0; i <= points; i++) {
+        const x = (i / points) * span;
+        labels.push(x.toFixed(0));
+        
+        // 计算该位置的挠度
+        let deflection = 0;
+        if (showDeflection) {
+          deflection = calculateDeflectionAtPosition(x, span, deflectionResults);
+        }
+        deflectionData.push(deflection);
+        
+        // 计算该位置的应力
+        let stress = 0;
+        if (showStress) {
+          stress = calculateStressAtPosition(x, span, stressResults);
+        }
+        stressData.push(stress);
+      }
+      
+      // 更新图表数据
+      resultsChart.data.labels = labels;
+      resultsChart.data.datasets[0].data = deflectionData;
+      resultsChart.data.datasets[1].data = stressData;
+      
+      // 显示/隐藏数据集
+      resultsChart.data.datasets[0].hidden = !showDeflection;
+      resultsChart.data.datasets[1].hidden = !showStress;
+      
+      // 更新图表
+      resultsChart.update();
+    }
+
+    // 计算指定位置的挠度
+    function calculateDeflectionAtPosition(x, span, deflectionResults) {
+      const L = span;
+      const maxDeflection = deflectionResults.maxDeflection;
+      
+      // 根据支撑方式和载荷类型计算不同位置的挠度
+      const loadType = document.querySelector('input[name="load-type"]:checked').value;
+      const support = supportType.value;
+      
+      let deflection = 0;
+      
+      switch (support) {
+        case 'simple':
+          if (loadType === 'point') {
+            // 简支梁中点集中载荷
+            deflection = maxDeflection * (3 * L * x - 4 * Math.pow(x, 3) / L) / L;
+          } else {
+            // 简支梁均布载荷
+            deflection = maxDeflection * (1 - 2 * Math.pow(x, 2) / Math.pow(L, 2) + Math.pow(x, 4) / Math.pow(L, 4));
+          }
+          break;
+        
+        case 'cantilever':
+          if (loadType === 'point') {
+            // 悬臂梁端点集中载荷
+            deflection = maxDeflection * (3 * L * x - Math.pow(x, 2) / L) / L;
+          } else {
+            // 悬臂梁均布载荷
+            deflection = maxDeflection * (6 * L * x - 4 * Math.pow(x, 2) / L + Math.pow(x, 3) / Math.pow(L, 2)) / L;
+          }
+          break;
+        
+        case 'fixed':
+          if (loadType === 'point') {
+            // 两端固定梁中点集中载荷
+            deflection = maxDeflection * (4 * Math.pow(x, 3) / L - 3 * x / L);
+          } else {
+            // 两端固定梁均布载荷
+            deflection = maxDeflection * (Math.pow(x, 4) / Math.pow(L, 4) - 2 * Math.pow(x, 2) / Math.pow(L, 2) + 1);
+          }
+          break;
+      }
+      
+      return deflection;
+    }
+
+    // 计算指定位置的应力
+    function calculateStressAtPosition(x, span, stressResults) {
+      const L = span;
+      const maxStress = stressResults.maxStress;
+      
+      // 根据支撑方式和载荷类型计算不同位置的应力
+      const loadType = document.querySelector('input[name="load-type"]:checked').value;
+      const support = supportType.value;
+      
+      let stress = 0;
+      
+      switch (support) {
+        case 'simple':
+          if (loadType === 'point') {
+            // 简支梁中点集中载荷
+            stress = maxStress * Math.min(x, L - x) * 2 / L;
+          } else {
+            // 简支梁均布载荷
+            stress = maxStress * Math.min(x, L - x) * 2 / L;
+          }
+          break;
+        
+        case 'cantilever':
+          if (loadType === 'point') {
+            // 悬臂梁端点集中载荷
+            stress = maxStress * x / L;
+          } else {
+            // 悬臂梁均布载荷
+            stress = maxStress * x / L;
+          }
+          break;
+        
+        case 'fixed':
+          if (loadType === 'point') {
+            // 两端固定梁中点集中载荷
+            stress = maxStress * Math.abs(1 - 2 * x / L);
+          } else {
+            // 两端固定梁均布载荷
+            stress = maxStress * Math.abs(1 - 2 * x / L);
+          }
+          break;
+      }
+      
+      return stress;
+    }
+
+    // 计算函数
+    function calculate() {
+      // 获取参数
+      const profileId = profileSelect.value;
+      const thickness = parseFloat(document.getElementById('thickness-select').value);
+      const span = parseFloat(spanSlider.value);
+      const loadValue = parseFloat(loadSlider.value) * 9.81; // 转换为牛顿
+      const loadType = document.querySelector('input[name="load-type"]:checked').value;
+      const support = supportType.value;
+      const safetyFactor = parseFloat(safetySlider.value);
+      
+      // 获取型材数据
+      const profile = aluminumProfiles.find(p => p.id === profileId);
+      if (!profile) return;
+      
+      // 获取选中的壁厚选项
+      const wallThicknessOption = profile.wallThicknessOptions.find(t => t.thickness === thickness);
+      if (!wallThicknessOption) return;
+      
+      // 获取设置
+      const deflectionRatio = parseInt(document.getElementById('deflection-ratio').value);
+      const showDeflection = document.getElementById('show-deflection').checked;
+      const showStress = document.getElementById('show-stress').checked;
+      
+      // 计算挠度
+      const deflectionResults = calculateDeflection(span, loadValue, loadType, support, profile, wallThicknessOption, deflectionRatio);
+      
+      // 计算应力
+      const stressResults = calculateStress(span, loadValue, loadType, support, profile, wallThicknessOption);
+      
+      // 计算安全系数
+      const safetyResults = calculateSafetyFactor(stressResults.maxStress, profile.material.yieldStrength, safetyFactor);
+      
+      // 更新结果显示
+      updateResults(deflectionResults, stressResults, safetyResults);
+      
+      // 更新图表
+      updateChart(span, deflectionResults, stressResults);
+      
+      // 生成推荐
+      generateRecommendations(span, loadValue, loadType, support, safetyFactor, profile, wallThicknessOption, deflectionResults, stressResults, safetyResults);
+    }
+
+    // 挠度计算
+    function calculateDeflection(span, loadValue, loadType, support, profile, wallThicknessOption, deflectionRatio) {
+      // 转换单位
+      const L = span / 1000; // 转换为米
+      const I = wallThicknessOption.sectionProperties.Ix * 1e-8; // 转换为m⁴
+      const E = profile.material.elasticModulus * 1e6; // 转换为Pa
+      let P = 0; // 集中载荷
+      let W = 0; // 均布载荷
+      
+      if (loadType === 'point') {
+        P = loadValue; // N
+      } else {
+        W = loadValue / L; // N/m
+      }
+      
+      let maxDeflection = 0; // m
+      
+      switch (support) {
+        case 'simple': // 简支梁
+          if (loadType === 'point') {
+            // 简支梁中点集中载荷
+            maxDeflection = (P * Math.pow(L, 3)) / (48 * E * I);
+          } else {
+            // 简支梁均布载荷
+            maxDeflection = (5 * W * Math.pow(L, 4)) / (384 * E * I);
+          }
+          break;
+        
+        case 'cantilever': // 悬臂梁
+          if (loadType === 'point') {
+            // 悬臂梁端点集中载荷
+            maxDeflection = (P * Math.pow(L, 3)) / (3 * E * I);
+          } else {
+            // 悬臂梁均布载荷
+            maxDeflection = (W * Math.pow(L, 4)) / (8 * E * I);
+          }
+          break;
+        
+        case 'fixed': // 两端固定梁
+          if (loadType === 'point') {
+            // 两端固定梁中点集中载荷
+            maxDeflection = (P * Math.pow(L, 3)) / (192 * E * I);
+          } else {
+            // 两端固定梁均布载荷
+            maxDeflection = (W * Math.pow(L, 4)) / (384 * E * I);
+          }
+          break;
+      }
+      
+      // 转换为mm并保留两位小数
+      const allowableDeflection = span / deflectionRatio;
+      const deflectionRatioValue = (maxDeflection * 1000) / allowableDeflection;
+      
+      return { 
+        maxDeflection: (maxDeflection * 1000),
+        allowableDeflection: allowableDeflection,
+        deflectionRatio: deflectionRatioValue
+      };
+    }
+
+    // 应力计算
+    function calculateStress(span, loadValue, loadType, support, profile, wallThicknessOption) {
+      // 转换单位
+      const L = span / 1000; // 转换为米
+      const Z = wallThicknessOption.sectionProperties.Zx * 1e-6; // 转换为m³
+      let P = 0; // 集中载荷
+      let W = 0; // 均布载荷
+      
+      if (loadType === 'point') {
+        P = loadValue; // N
+      } else {
+        W = loadValue / L; // N/m
+      }
+      
+      let maxMoment = 0; // N·m
+      
+      switch (support) {
+        case 'simple': // 简支梁
+          if (loadType === 'point') {
+            // 简支梁中点集中载荷
+            maxMoment = (P * L) / 4;
+          } else {
+            // 简支梁均布载荷
+            maxMoment = (W * Math.pow(L, 2)) / 8;
+          }
+          break;
+        
+        case 'cantilever': // 悬臂梁
+          if (loadType === 'point') {
+            // 悬臂梁端点集中载荷
+            maxMoment = P * L;
+          } else {
+            // 悬臂梁均布载荷
+            maxMoment = (W * Math.pow(L, 2)) / 2;
+          }
+          break;
+        
+        case 'fixed': // 两端固定梁
+          if (loadType === 'point') {
+            // 两端固定梁中点集中载荷
+            maxMoment = (P * L) / 8;
+          } else {
+            // 两端固定梁均布载荷
+            maxMoment = (W * Math.pow(L, 2)) / 12;
+          }
+          break;
+      }
+      
+      // 计算最大应力(MPa)
+      const maxStress = (maxMoment / Z) / 1e6;
+      
+      return { 
+        maxStress: maxStress,
+        yieldStrength: profile.material.yieldStrength,
+        stressRatio: maxStress / profile.material.yieldStrength
+      };
+    }
+
+    // 安全系数计算
+    function calculateSafetyFactor(maxStress, yieldStrength, targetSafetyFactor) {
+      // 计算实际安全系数
+      const actualSafetyFactor = yieldStrength / maxStress;
+      
+      // 判断是否安全
+      const isSafe = actualSafetyFactor >= targetSafetyFactor;
+      
+      return { 
+        targetSafetyFactor: targetSafetyFactor,
+        actualSafetyFactor: actualSafetyFactor,
+        isSafe: isSafe
+      };
+    }
+
+    // 更新结果显示
+    function updateResults(deflectionResults, stressResults, safetyResults) {
+      // 更新挠度结果
+      deflectionValue.textContent = deflectionResults.maxDeflection.toFixed(2);
+      allowableDeflection.textContent = deflectionResults.allowableDeflection.toFixed(2);
+      
+      if (deflectionResults.deflectionRatio <= 1) {
+        deflectionStatus.textContent = '挠度满足要求';
+        deflectionStatus.className = 'success';
+      } else {
+        deflectionStatus.textContent = '挠度超出允许值';
+        deflectionStatus.className = 'danger';
+      }
+      
+      // 更新应力结果
+      stressValue.textContent = stressResults.maxStress.toFixed(2);
+      yieldStrength.textContent = stressResults.yieldStrength.toFixed(2);
+      
+      if (stressResults.stressRatio <= 1) {
+        stressStatus.textContent = '应力满足要求';
+        stressStatus.className = 'success';
+      } else {
+        stressStatus.textContent = '应力超出屈服强度';
+        stressStatus.className = 'danger';
+      }
+      
+      // 更新安全系数结果
+      safetyValue.textContent = safetyResults.actualSafetyFactor.toFixed(2);
+      targetSafety.textContent = safetyResults.targetSafetyFactor.toFixed(2);
+      
+      if (safetyResults.isSafe) {
+        safetyStatus.textContent = '安全系数满足要求';
+        safetyStatus.className = 'success';
+      } else {
+        safetyStatus.textContent = '安全系数不足';
+        safetyStatus.className = 'danger';
+      }
+    }
+
+    // 生成推荐
+    function generateRecommendations(span, loadValue, loadType, support, safetyFactor, profile, wallThicknessOption, deflectionResults, stressResults, safetyResults) {
+      // 优化建议
+      let optimizationText = '';
+      
+      if (deflectionResults.deflectionRatio > 1 && stressResults.stressRatio > 1) {
+        optimizationText = '当前型材在挠度和强度方面均不满足要求，建议：<br>1. 选择更大规格的型材<br>2. 增加支撑点，缩短跨度<br>3. 优化载荷分布<br>4. 增加型材壁厚';
+      } else if (deflectionResults.deflectionRatio > 1) {
+        optimizationText = '当前型材挠度超出允许值，建议：<br>1. 选择惯性矩更大的型材<br>2. 增加支撑点，缩短跨度<br>3. 考虑使用组合型材结构<br>4. 增加型材壁厚';
+      } else if (stressResults.stressRatio > 1) {
+        optimizationText = '当前型材应力超出屈服强度，建议：<br>1. 选择截面模量更大的型材<br>2. 选择强度更高的合金材料<br>3. 优化结构设计，减少弯矩<br>4. 增加型材壁厚';
+      } else if (!safetyResults.isSafe) {
+        optimizationText = '当前型材安全系数不足，建议：<br>1. 选择更大规格的型材<br>2. 增加安全系数<br>3. 优化结构设计<br>4. 增加型材壁厚';
+      } else {
+        optimizationText = '当前型材满足设计要求，以下是优化建议：<br>1. 考虑使用更小规格的型材以降低成本<br>2. 优化支撑布局以减少材料用量<br>3. 可考虑使用组合型材结构提高性能/重量比<br>4. 如对重量有要求，可考虑减小壁厚';
+      }
+      
+      optimizationAdvice.innerHTML = optimizationText;
+    }
+
+    // 主题切换
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      
+      // 更新主题切换按钮图标
+      const themeIcon = document.querySelector('#theme-toggle i');
+      if (document.body.classList.contains('light-theme')) {
+        themeIcon.classList.remove('fa-sun-o');
+        themeIcon.classList.add('fa-moon-o');
+      } else {
+        themeIcon.classList.remove('fa-moon-o');
+        themeIcon.classList.add('fa-sun-o');
+      }
+      
+      // 更新支撑方式选项卡样式
+      updateSupportOptionsStyle();
+      
+      // 重新初始化图表以适应新主题
+      if (resultsChart) {
+        resultsChart.destroy();
+        resultsChart = createChart();
+      }
+    }
+
+    // 初始化支撑方式选项
+    function initSupportOptions() {
+      const options = document.querySelectorAll('.support-option');
+      const hiddenInput = document.getElementById('support-type');
+      
+      // 设置初始选中状态
+      options.forEach(option => {
+        if (option.dataset.value === hiddenInput.value) {
+          option.classList.add('border-primary');
+          option.classList.add('border-glow');
+          option.classList.add('selected');
+        }
+      });
+      
+      // 绑定点击事件
+      options.forEach(option => {
+        option.addEventListener('click', () => {
+          // 移除所有选项的选中状态
+          options.forEach(opt => {
+            opt.classList.remove('border-primary');
+            opt.classList.remove('border-glow');
+            opt.classList.remove('selected');
+          });
+          
+          // 设置当前选项为选中状态
+          option.classList.add('border-primary');
+          option.classList.add('border-glow');
+          option.classList.add('selected');
+          
+          // 更新隐藏输入的值
+          hiddenInput.value = option.dataset.value;
+        });
+      });
+      
+      // 更新样式以适应当前主题
+      updateSupportOptionsStyle();
+    }
+    
+    // 更新支撑方式选项卡样式以适应主题
+    function updateSupportOptionsStyle() {
+      const options = document.querySelectorAll('.support-option');
+      const isLightTheme = document.body.classList.contains('light-theme');
+      
+      options.forEach(option => {
+        if (isLightTheme) {
+          option.classList.remove('bg-dark-gray');
+          option.classList.add('bg-white');
+          option.classList.remove('border-light-gray');
+          option.classList.add('border-gray-200');
+        } else {
+          option.classList.add('bg-dark-gray');
+          option.classList.remove('bg-white');
+          option.classList.add('border-light-gray');
+          option.classList.remove('border-gray-200');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
