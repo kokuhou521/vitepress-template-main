@@ -17,7 +17,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '玩家手册', link: '/quick-start/quick-start' },
-      { text: '案例', link: '/examples/markdown-examples' }
+      { text: '承重计算器', link: '/alm-tool' }
     ],
 
     sidebar: [
