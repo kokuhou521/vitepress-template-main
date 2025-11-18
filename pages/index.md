@@ -8,7 +8,7 @@ hero:
   tagline: 铝型材 DIY，玩法无界，你的创意就是规则！
   actions:
     - theme: brand
-      <a href="/alm-tool.html" target="_self">铝型材承重计算器</a>
+      text：<a href="/alm-tool.html" target="_self">铝型材承重计算器</a>
     - theme: alt
       text: 小红书
       link: /api-examples
