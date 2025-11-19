@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 承重计算器
-      link: <a href="javascript:void(0)" onclick="setTimeout(()=>window.location.href='/alm-tool.html',100)">承重计算器</a>
+      link: /alm-tool.html
     - theme: alt
       text: 小红书
       link: /api-examples
