@@ -9,8 +9,8 @@ hero:
   actions:
     - theme: brand
       text: 打开手册
-      link: /api-examples
-    - theme: alt
+      link: /quick-start/quick-start
+    - theme: brand
       text: 承重计算器
       link: /alm-tool.html
       target: _self
@@ -20,10 +20,12 @@ hero:
       target: _blank
     - theme: alt
       text: 抖音
-      link: /api-examples
+      link: https://v.douyin.com/sgpmzryNxk0/%207@0.com%20:0pm
+      target: _blank
     - theme: alt
       text: B站
-      link: /api-examples
+      link: https://space.bilibili.com/416835962
+      target: _blank
 
 features:
   - title: 模块化自由组装
