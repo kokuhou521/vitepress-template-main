@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  lang: 'zh-CN',
   title: "阿鲁米ARUMI",
   description: "欧标铝型材DIY玩家手册",
   srcDir: 'pages',
@@ -11,20 +12,19 @@ export default defineConfig({
   themeConfig: {
     search: {
       provider: 'local',
-      options: {
-        locales: {
-          zh: {
-            translations: {
-              button: {
-                buttonText: '搜索文档',
-                buttonAriaLabel: '搜索文档'
-              },
-              modal: {
-                noResultsText: '无法找到相关结果',
-                resetButtonTitle: '清除查询条件',
-                footer: {
-                  selectText: '选择',
-                  navigateText: '切换'
+      locales: {
+        zh: {
+          translations: {
+            button: {
+              buttonText: '搜索文档',
+              buttonAriaLabel: '搜索文档'
+            },
+            modal: {
+              noResultsText: '无法找到相关结果',
+              resetButtonTitle: '清除查询条件',
+              footer: {
+                selectText: '选择',
+                navigateText: '切换'
                 }
               }
             }
