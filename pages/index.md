@@ -8,12 +8,16 @@ hero:
   tagline: 铝型材 DIY，玩法无界，你的创意就是规则！
   actions:
     - theme: brand
+      text: 打开手册
+      link: /api-examples
+    - theme: alt
       text: 承重计算器
       link: /alm-tool.html
       target: _self
     - theme: alt
       text: 小红书
-      link: /api-examples
+      link: https://xhslink.com/m/9XdAwIU4PFV
+      target: _blank
     - theme: alt
       text: 抖音
       link: /api-examples
