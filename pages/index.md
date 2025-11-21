@@ -10,6 +10,7 @@ hero:
     - theme: brand
       text: 承重计算器
       link: /alm-tool.html
+      target: _self
     - theme: alt
       text: 小红书
       link: /api-examples
