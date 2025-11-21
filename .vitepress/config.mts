@@ -16,7 +16,8 @@ export default defineConfig({
     },
     nav: [
       { text: '首页', link: '/' },
-      { text: '玩家手册', link: '/quick-start/quick-start' }
+      { text: '玩家手册', link: '/quick-start/quick-start' },
+      { text: '承重计算器', link: '/alm-tool.html', target: '_self' }
     ],
 
     sidebar: [
