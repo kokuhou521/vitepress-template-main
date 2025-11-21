@@ -48,10 +48,10 @@ export default defineConfig({
         text: '入门',
         collapsed: true,
         items: [
-          { text: '基础知识', link: '/quick-start/基础知识' },
-          { text: '连接方式', link: '/quick-start/quick-start#installation' },
-          { text: 'DIY工具', link: '/quick-start/quick-start#basic-setup' },
-          { text: '配件库', link: '/quick-start/quick-start#configuration' }
+          { text: '基础知识', link: '/book/基础知识' },
+          { text: '连接方式', link: '/book/连接方式' },
+          { text: 'DIY工具', link: '/book/DIY工具' },
+          { text: '配件库', link: '/book/配件库' }
         ]
       },
       {
