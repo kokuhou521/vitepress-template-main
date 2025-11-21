@@ -6,7 +6,7 @@ hero:
   name: "阿鲁米ARUMI"
   text: "铝型材DIY玩家手册"
   tagline: 铝型材 DIY，玩法无界，你的创意就是规则！
-  image: /bg1.jpg
+  image: /
   actions:
     - theme: brand
       text: 打开手册
