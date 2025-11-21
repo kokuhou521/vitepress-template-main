@@ -9,6 +9,9 @@ export default defineConfig({
   ignoreDeadLinks: true,
   cleanUrls: true,
   themeConfig: {
+    search: {
+      provider: 'local'
+    },
     // https://vitepress.dev/reference/default-theme-config
     outline: {
       level: [2, 4],    // 显示 h2 到 h4 级别的标题
