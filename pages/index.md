@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: 打开手册
-      link: /quick-start/quick-start
+      link: /book/基础知识
     - theme: brand
       text: 承重计算器
       link: /alm-tool.html
