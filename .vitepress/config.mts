@@ -42,11 +42,10 @@ export default defineConfig({
       { text: '玩家手册', link: '/book/基础知识' },
       { text: '承重计算器', link: '/alm-tool.html', target: '_self' }
     ],
-
     sidebar: [
       {
         text: '入门',
-        collapsed: true,
+        collapsed: false,
         items: [
           { text: '基础知识', link: '/book/基础知识' },
           { text: '连接方式', link: '/book/连接方式' },
@@ -56,7 +55,7 @@ export default defineConfig({
       },
       {
         text: '认识铝型材',
-        collapsed: true,
+        collapsed: false,
         items: [
           { text: '欧标铝型材', link: '/advanced/custom-theme' },
           { text: '配件库', link: '/advanced/markdown-extensions' },
@@ -65,23 +64,22 @@ export default defineConfig({
       },
       {
         text: '连接方式',
-        collapsed: true,
+        collapsed: false,
         items: [
           { text: '基础知识', link: '/quick-start/quick-start#build-for-production' },
           { text: '连接方式', link: '/quick-start/quick-start#deploy-to-github-pages' },
           { text: '技巧', link: '/quick-start/quick-start#netlify-deployment' }
         ]
-
-
       },
       {
         text: '工具',
+        collapsed: false,
         items: [
           { text: '参考资料', link: '/examples/markdown-examples' },
           { text: '案例分享', link: '/examples/api-examples' }
         ]
       }
-    ],
+    ]
 
 //    socialLinks: [
 //      { icon: 'github', link: 'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/vitepress-template' }
