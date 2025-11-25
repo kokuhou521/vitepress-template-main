@@ -86,5 +86,4 @@ export default defineConfig({
 //    socialLinks: [
 //      { icon: 'github', link: 'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/vitepress-template' }
 //    ]
-  }
 })
