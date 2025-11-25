@@ -12,28 +12,29 @@ export default defineConfig({
   cleanUrls: true,
 
   themeConfig: {
-    // 1. search 配置是 themeConfig 的一个子项
-    search: {
-      provider: 'local',
-      locales: {
-        zh: {
-          translations: {
-            button: {
-              buttonText: '搜索文档',
-              buttonAriaLabel: '搜索文档'
-            },
-            modal: {
-              noResultsText: '无法找到相关结果',
-              resetButtonTitle: '清除查询条件',
-              footer: {
-                selectText: '选择',
-                navigateText: '切换'
-              }
+  search: {
+    provider: 'local',
+    // 语言key改为与站点lang一致的"zh-CN"
+    locales: {
+      'zh-CN': { 
+        translations: {
+          button: {
+            buttonText: '搜索文档',
+            buttonAriaLabel: '搜索文档'
+          },
+          modal: {
+            placeholder: '输入关键词搜索', // 新增：搜索框的中文占位符
+            noResultsText: '无法找到相关结果',
+            resetButtonTitle: '清除查询条件',
+            footer: {
+              selectText: '选择',
+              navigateText: '切换'
             }
           }
         }
       }
-    },
+    }
+  },
 
     // 2. outline, nav, sidebar 也都是 themeConfig 的直接子项
     //    它们与 search 是同级关系
