@@ -57,9 +57,8 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: '什么是欧标铝型材？', link: '/book/基础知识#什么是“欧标铝型材”？' },
-          { text: '连接方式', link: '/book/连接方式' },
-          { text: 'DIY工具', link: '/book/DIY工具' },
-          { text: '配件库', link: '/book/配件库' }
+          { text: 'DIY铝型材的基本三要素', link: '/book/基础知识#DIY铝型材的基本三要素' },
+          { text: '常用型号与规格标识', link: '/book/基础知识#常用型号与规格标识' }
         ]
       },
       {
