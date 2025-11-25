@@ -56,7 +56,7 @@ export default defineConfig({
         text: '入门',
         collapsed: false,
         items: [
-          { text: '基础知识', link: '/book/基础知识' },
+          { text: '什么是欧标铝型材？', link: '/book/基础知识#什么是“欧标铝型材”？' },
           { text: '连接方式', link: '/book/连接方式' },
           { text: 'DIY工具', link: '/book/DIY工具' },
           { text: '配件库', link: '/book/配件库' }
