@@ -1,3 +1,4 @@
+// .vitepress/config.mts
 import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
@@ -9,7 +10,9 @@ export default defineConfig({
   outDir: 'dist',
   ignoreDeadLinks: true,
   cleanUrls: true,
+
   themeConfig: {
+    // 1. search 配置是 themeConfig 的一个子项
     search: {
       provider: 'local',
       locales: {
@@ -25,23 +28,26 @@ export default defineConfig({
               footer: {
                 selectText: '选择',
                 navigateText: '切换'
-                }
               }
             }
           }
         }
       }
     },
-    // https://vitepress.dev/reference/default-theme-config
+
+    // 2. outline, nav, sidebar 也都是 themeConfig 的直接子项
+    //    它们与 search 是同级关系
     outline: {
       level: [2, 4],    // 显示 h2 到 h4 级别的标题
-			label: '内容导航', // 大纲的标题
+      label: '内容导航', // 大纲的标题
     },
+
     nav: [
       { text: '首页', link: '/' },
       { text: '玩家手册', link: '/book/基础知识' },
       { text: '承重计算器', link: '/alm-tool.html', target: '_self' }
     ],
+
     sidebar: [
       {
         text: '入门',
@@ -57,18 +63,21 @@ export default defineConfig({
         text: '认识铝型材',
         collapsed: false,
         items: [
-          { text: '欧标铝型材', link: '/advanced/custom-theme' },
-          { text: '配件库', link: '/advanced/markdown-extensions' },
-          { text: '非标', link: '/advanced/code-highlighting' }
+          // 注意：这里的链接需要与你实际的文件路径对应
+          // 例如，如果你的文件是 pages/advanced/欧标铝型材.md，那么链接就是 /advanced/欧标铝型材
+          { text: '欧标铝型材', link: '/advanced/欧标铝型材' }, 
+          { text: '配件库', link: '/advanced/配件库' },
+          { text: '非标', link: '/advanced/非标' }
         ]
       },
       {
         text: '连接方式',
         collapsed: false,
         items: [
-          { text: '基础知识', link: '/quick-start/quick-start#build-for-production' },
-          { text: '连接方式', link: '/quick-start/quick-start#deploy-to-github-pages' },
-          { text: '技巧', link: '/quick-start/quick-start#netlify-deployment' }
+          // 同样，这里的链接也需要修正
+          { text: '基础知识', link: '/connection/基础知识' },
+          { text: '连接方式', link: '/connection/连接方式' },
+          { text: '技巧', link: '/connection/技巧' }
         ]
       },
       {
@@ -81,7 +90,9 @@ export default defineConfig({
       }
     ]
 
-//    socialLinks: [
-//      { icon: 'github', link: 'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/vitepress-template' }
-//    ]
+    // socialLinks 配置可以按需开启
+    // socialLinks: [
+    //   { icon: 'github', link: 'https://github.com/your-repo' }
+    // ]
+  }
 })
