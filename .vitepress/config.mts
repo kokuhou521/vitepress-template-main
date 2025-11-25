@@ -1,9 +1,8 @@
 // .vitepress/config.mts
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
-  lang: 'zh-CN',
+  lang: 'zh-CN', // 站点默认语言
   title: "阿鲁米ARUMI",
   description: "欧标铝型材DIY玩家手册",
   srcDir: 'pages',
@@ -12,20 +11,22 @@ export default defineConfig({
   cleanUrls: true,
 
   themeConfig: {
-  search: {
-    provider: 'local',
-    // 语言key改为与站点lang一致的"zh-CN"
+    // 👇 新增：主题本地化配置（搜索翻译在这里！）
     locales: {
-      'zh-CN': { 
-        translations: {
+      // 键是语言路径（'/' 表示默认语言），值是该语言的配置
+      '/': {
+        // 站点名称（可选，会覆盖顶层的 title）
+        label: '中文',
+        // 搜索相关翻译（核心！）
+        search: {
+          placeholder: '输入关键词搜索',
+          noResultsText: '无法找到相关结果',
+          resetButtonTitle: '清除查询条件',
           button: {
             buttonText: '搜索文档',
             buttonAriaLabel: '搜索文档'
           },
           modal: {
-            placeholder: '输入关键词搜索', // 新增：搜索框的中文占位符
-            noResultsText: '无法找到相关结果',
-            resetButtonTitle: '清除查询条件',
             footer: {
               selectText: '选择',
               navigateText: '切换'
@@ -33,22 +34,23 @@ export default defineConfig({
           }
         }
       }
-    }
-  },
-
-    // 2. outline, nav, sidebar 也都是 themeConfig 的直接子项
-    //    它们与 search 是同级关系
-    outline: {
-      level: [2, 4],    // 显示 h2 到 h4 级别的标题
-      label: '内容导航', // 大纲的标题
     },
 
+    // 👇 保留你原来的 search 配置（只留 provider: 'local'，删掉 locales）
+    search: {
+      provider: 'local' // 必须是 local 才支持本地搜索
+    },
+
+    // 其他配置不变（outline/nav/sidebar）
+    outline: {
+      level: [2, 4],
+      label: '内容导航'
+    },
     nav: [
       { text: '首页', link: '/' },
       { text: '玩家手册', link: '/book/基础知识' },
       { text: '承重计算器', link: '/alm-tool.html', target: '_self' }
     ],
-
     sidebar: [
       {
         text: '入门',
@@ -64,9 +66,7 @@ export default defineConfig({
         text: '认识铝型材',
         collapsed: false,
         items: [
-          // 注意：这里的链接需要与你实际的文件路径对应
-          // 例如，如果你的文件是 pages/advanced/欧标铝型材.md，那么链接就是 /advanced/欧标铝型材
-          { text: '欧标铝型材', link: '/advanced/欧标铝型材' }, 
+          { text: '欧标铝型材', link: '/advanced/欧标铝型材' },
           { text: '配件库', link: '/advanced/配件库' },
           { text: '非标', link: '/advanced/非标' }
         ]
@@ -75,7 +75,6 @@ export default defineConfig({
         text: '连接方式',
         collapsed: false,
         items: [
-          // 同样，这里的链接也需要修正
           { text: '基础知识', link: '/connection/基础知识' },
           { text: '连接方式', link: '/connection/连接方式' },
           { text: '技巧', link: '/connection/技巧' }
@@ -90,10 +89,5 @@ export default defineConfig({
         ]
       }
     ]
-
-    // socialLinks 配置可以按需开启
-    // socialLinks: [
-    //   { icon: 'github', link: 'https://github.com/your-repo' }
-    // ]
   }
 })
